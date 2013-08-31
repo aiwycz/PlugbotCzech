@@ -1,4 +1,11 @@
 /*
+ * Original script is by Conner Davis from https://github.com/connergdavis/Plugbot 
+ * 
+ * Aiwy (me) just does light version with some modifications for Czech users and other fans of Plug.dj
+ *
+ */
+
+/*
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -12,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /*
  * TERMS OF REPRODUCTION USE
  *
@@ -71,7 +78,7 @@ var COOKIE_USERLIST = 'userlist';
 var MAX_USERS_WAITLIST = 50;
 
 /**
- * Initialise all of the Plug.dj API listeners which we use
+ * Initialize all of the Plug.dj API listeners which we use
  * to asynchronously intercept specific events and the data
  * attached with them.
  */
