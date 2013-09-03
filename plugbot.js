@@ -57,20 +57,20 @@ var autoqueue;
 var hideVideo;
 /*
  * Whether or not the user has enabled the userlist.
+ *
+ *var userList; 
  */
-var userList;
 /*
- * Whether the current video was skipped or not.
+ * Whether user want turn off or on animations (saves a lot of cpu power and battery life)
  */
-var skippingVideo = false;
-
+var turnAnim = true;
 /*
  * Cookie constants
  */
 var COOKIE_WOOT = 'autowoot';
 var COOKIE_QUEUE = 'autoqueue';
 var COOKIE_HIDE_VIDEO = 'hidevideo';
-var COOKIE_USERLIST = 'userlist';
+var COOKIE_TURNANIM = 'turnAnim';
 
 /*
  * Maximum amount of people that can be in the waitlist.
@@ -87,7 +87,7 @@ function initAPIListeners()
     /*
      * This listens in for whenever a new DJ starts playing.
      */
-    API.on(API.DJ_ADVANCE, djAdvanced);
+    //API.on(API.DJ_ADVANCE, djAdvanced);
 
     /*
      * This listens for changes in the waiting list
@@ -103,35 +103,37 @@ function initAPIListeners()
      * This listens for whenever a user in the room either WOOT!s
      * or Mehs the current song.
      */
-    API.on(API.VOTE_UPDATE, function (obj) 
+/*    API.on(API.VOTE_UPDATE, function (obj) 
 	{
         if (userList) 
 		{
             populateUserlist();
         }
     });
-
+*/
     /*
      * Whenever a user joins, this listener is called.
      */
-    API.on(API.USER_JOIN, function (user) 
+  
+    
+ /*   API.on(API.USER_JOIN, function (user) 
 	{
         if (userList) 
 		{
             populateUserlist();
         }
     });
-
+*/
     /*
      * Called upon a user exiting the room.
      */
-    API.on(API.USER_LEAVE, function (user) 
+ /*   API.on(API.USER_LEAVE, function (user) 
 	{
         if (userList) 
 		{
             populateUserlist();
         }
-    });
+    });*/
 }
 
 
@@ -150,16 +152,15 @@ function displayUI()
     /*
      * Generate the HTML code for the UI.
      */
-    $('#chat').prepend('<div id="plugbot-ui"></div>');
+    // $('#chat').prepend('<div id="plugbot-ui"></div>');
 	
     var cWoot = autowoot ? '#3FFF00' : '#ED1C24';
     var cQueue = autoqueue ? '#3FFF00' : '#ED1C24';
     var cHideVideo = hideVideo ? '#3FFF00' : '#ED1C24';
-    var cUserList = userList ? '#3FFF00' : '#ED1C24';
+    var cAnim = hideAnim ? "#3FFF00" : "#ED1C24";
 	
-    $('#plugbot-ui').append(
-        '<p id="plugbot-btn-woot" style="color:' + cWoot + '">auto-woot</p><p id="plugbot-btn-queue" style="color:' + cQueue + '">auto-queue</p><p id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">hide video</p><p id="plugbot-btn-skipvideo" style="color:#ED1C24">skip video</p><p id="plugbot-btn-userlist" style="color:' + cUserList + '">userlist</p>');
-}
+    $('div#footer-links').html('<span class="footer"><a href="#" onclick="return false" id="plugbot-btn-woot" style="color:' + cWoot + '">Wootování</a>&nbsp; | &nbsp;<a href="#" onclick="return false" id="plugbot-btn-queue" style="color:' + cQueue + '">Být ve frontě</a>&nbsp; | &nbsp;<a href="#" onclick="return false" id="plugbot-btn-hidevideo" style="color:' + cHideVideo + '">Skýt video</a>&nbsp; | &nbsp;<a href="#" onclick="return false" id="plugbot-btn-anim" style="color:' + cAnim + '">Vypnout animace</a>&nbsp; | &nbsp;<a href="/about" target="_blank">O službě</a>&nbsp; | &nbsp;<a href="http://blog.plug.dj/" target="_blank">Blog</a>&nbsp; | &nbsp;<a href="http://blog.plug.dj/api-documentation/" target="_blank">API</a>&nbsp; | &nbsp;<a href="http://twitter.com/plugdj" target="_blank">Twitter</a>&nbsp; | &nbsp;<a href="http://facebook.com/plugdj" target="_blank">Facebook</a>&nbsp; | &nbsp;<a href="/terms" target="_blank">Podmínky použití</a>&nbsp; | &nbsp;<a href="/logout">Odhlásit</a></span><span class="copyright">&copy;2012 Plug DJ, LLC.</span>');
+}    
 
 /**
  * For every button on the Plug.bot UI, we have listeners backing them
@@ -172,6 +173,7 @@ function initUIListeners()
     /*
      * Toggle userlist.
      */
+	/*
     $('#plugbot-btn-userlist').on("click", function() 
 	{
         userList = !userList;
@@ -188,7 +190,8 @@ function initUIListeners()
         }
         jaaulde.utils.cookies.set(COOKIE_USERLIST, userList);
     });
-
+*/
+	$("#plugbot-btn-anim").on("click", turnAnim()); 
     /*
      * Toggle auto-woot.
      */
@@ -233,7 +236,7 @@ function initUIListeners()
 	/*
 	 * Skip the current video.
 	 */
-	$('#plugbot-btn-skipvideo').on('click', function()
+/*	$('#plugbot-btn-skipvideo').on('click', function()
 	{
 		skippingVideo = !skippingVideo;
 		$(this).css('color', skippingVideo ? '#3FFF00' : '#ED1C24');
@@ -248,7 +251,7 @@ function initUIListeners()
 			$('#button-sound').click();
 		}
 	});
-
+*/
     /*
      * Toggle auto-queue/auto-DJ.
      */
@@ -271,11 +274,11 @@ function initUIListeners()
  * @param obj
  * 				This contains the current DJ's data.
  */
-function djAdvanced(obj) 
+/*function djAdvanced(obj) 
 {
-    /*
-     * If they want the video to be hidden, be sure to re-hide it.
-     */
+    
+     // If they want the video to be hidden, be sure to re-hide it.
+    
     if (hideVideo) 
 	{
         $('#yt-frame').css('height', '0px');
@@ -289,17 +292,17 @@ function djAdvanced(obj)
 		skippingVideo = false;
 	}
 
-    /*
-     * If auto-woot is enabled, WOOT! the song.
-     */
+    
+     // If auto-woot is enabled, WOOT! the song.
+     
     if (autowoot) 
 	{
         $('#button-vote-positive').click();
     }
 
-    /*
-     * If the userlist is enabled, re-populate it.
-     */
+    
+     // If the userlist is enabled, re-populate it.
+    
     if (userList) 
 	{
         populateUserlist();
@@ -590,6 +593,21 @@ function drawUserlistItem(imagePath, color, username)
         '<p style="cursor:pointer;' + (imagePath === 'void' ? '' : 'text-indent:6px !important;') + 'color:' + color + ';' + ((API.getDJs()[0].username == username) ? 'font-size:15px;font-weight:bold;' : '') + '" onclick="$(\'#chat-input-field\').val($(\'#chat-input-field\').val() + \'@' + username + ' \').focus();">' + username + '</p>');
 }
 
+function turnAnim()
+{
+	turnAnim = !turnAnim;
+	  	$(this).css("color", hideAnim ? "#3FFF00" : "#ED1C24");
+	    	if(hideAnim){
+	    		window.avatarTick = function(){}	
+	    	}
+	    	else {
+	    		window.avatarTick=hold;
+	    		startAnimation();
+	    	}
+	    	jaaulde.utils.cookies.set(COOKIE_TURNANIM, turnAnim);
+	   
+	
+}
 
 ///////////////////////////////////////////////////////////
 ////////// EVERYTHING FROM HERE ON OUT IS INIT ////////////
@@ -598,7 +616,11 @@ function drawUserlistItem(imagePath, color, username)
 /*
  * Clear the old code so we can properly update everything.
  */
-$('#plugbot-userlist').remove();
+
+/*
+ *$('#plugbot-userlist').remove();
+*/
+
 $('#plugbot-css').remove();
 $('#plugbot-js').remove();
 
@@ -660,8 +682,8 @@ function readCookies()
     /*
      * Read userlist cookie (true by default)
      */
-    value = jaaulde.utils.cookies.get(COOKIE_USERLIST);
-    userList = value != null ? value : true;
+    value = jaaulde.utils.cookies.get(COOKIE_TURNANIM);
+    turnAnim = value != null ? value : true;
 
     onCookiesLoaded();
 }
@@ -719,11 +741,19 @@ function onCookiesLoaded()
     }
 
     /*
-     * Generate userlist, if userList is enabled.
+     * Catch that function for future re-enable animations 
      */
-    if (userList) 
+    
+    hold = window.avatarTick;
+    
+    
+    /*
+     * Turn off animatinos if was clicked before
+     */
+    
+    if (turnAnim) 
 	{
-        populateUserlist();
+        turnAnim();
     }
 
     /*
